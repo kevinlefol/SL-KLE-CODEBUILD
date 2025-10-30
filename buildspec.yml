@@ -9,5 +9,4 @@ phases:
           --query "Reservations[0].Instances[0].InstanceId" \
           --output text \
           --region eu-west-3)
-
       - echo "Instance trouvée : $INSTANCE_ID"
