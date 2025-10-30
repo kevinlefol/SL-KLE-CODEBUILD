@@ -3,5 +3,5 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "Récupération de l'instance EC2 via tag..."
-      - echo "Instance trouvée : $INSTANCE_ID"
+      - echo "Récupération de l'instance EC2 via tag"
+      - echo "Instance trouvée $INSTANCE_ID"
