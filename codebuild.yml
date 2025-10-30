@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Récupération de l'instance EC2 via tag..."
+      - INSTANCE_ID=$(aws ec2 describe-instances \
+          --filters "Name=tag:Name,Values=kle-codebuild-test" "Name=environment,Values=dev"\
+          --query "Reservations[0].Instances[0].InstanceId" \
+          --output text \
+          --region eu-west-3)
+
+      - echo "Instance trouvée : $INSTANCE_ID"
