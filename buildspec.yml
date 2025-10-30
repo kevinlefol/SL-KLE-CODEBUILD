@@ -9,7 +9,7 @@ phases:
           --filters "Name=tag:Name,Values=kle-codebuild-test" "Name=tag:environment,Values=dev"\
           --query "Reservations[].Instances[].InstanceId" \
           --output text \
-          --region eu-central-1)
+          --region eu-west-3)
 
         echo "Résultat brut $INSTANCE_ID"
 
