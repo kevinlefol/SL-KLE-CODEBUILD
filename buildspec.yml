@@ -32,11 +32,13 @@ phases:
       # Si CODEBUILD_SOURCE_VERSION est un ARN complet
       - OBJECT_KEY=$(echo $CODEBUILD_SOURCE_VERSION | awk -F':::' '{print $2}')
       - echo "Object key $OBJECT_KEY"
+      - echo "download_path $download_path"
+      - echo "app_target_source_path  $app_target_source_path"
       # Téléchargement du fichier depuis S3
-      - |
-        aws ssm send-command \
-        --instance-ids "$INSTANCE_ID" \
-        --document-name "AWS-RunShellScript" \
-        --comment "Déploiement du fichier" \
-        --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\"]}" \
-        --region eu-west-3
+      # - |
+      #   aws ssm send-command \
+      #   --instance-ids "$INSTANCE_ID" \
+      #   --document-name "AWS-RunShellScript" \
+      #   --comment "Déploiement du fichier" \
+      #   --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\"]}" \
+      #   --region eu-west-3
