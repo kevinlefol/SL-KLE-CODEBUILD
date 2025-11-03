@@ -33,7 +33,8 @@ phases:
       - OBJECT_KEY=$(echo $CODEBUILD_SOURCE_VERSION | awk -F':::' '{print $2}')
       - echo "Object key $OBJECT_KEY"
       # Téléchargement du fichier depuis S3
-      - aws ssm send-command \
+      - |
+        aws ssm send-command \
         --instance-ids "$INSTANCE_ID" \
         --document-name "AWS-RunShellScript" \
         --comment "Déploiement du fichier" \
