@@ -38,5 +38,5 @@ phases:
         --instance-ids "$INSTANCE_ID" \
         --document-name "AWS-RunShellScript" \
         --comment "Déploiement du fichier" \
-        --parameters "{\"commands\":[\"mkdir -p /tmp/uploaded /tmp/monapp\",\"aws s3 cp s3://$OBJECT_KEY /tmp/uploaded/fichier.zip\",\"unzip -o /tmp/uploaded/fichier.zip -d /tmp/monapp\"]}" \
+        --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\"]}" \
         --region eu-west-3
