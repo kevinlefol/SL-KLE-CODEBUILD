@@ -34,12 +34,17 @@ phases:
       - echo "Object key $OBJECT_KEY"
       - echo "download_path $download_path"
       - echo "app_target_source_path  $app_target_source_path"
-      - echo "app_target_source_path  $app_target_source_path"
+      
       # Téléchargement du fichier depuis S3
       - |
         aws ssm send-command \
         --instance-ids "$INSTANCE_ID" \
         --document-name "AWS-RunShellScript" \
-        --comment "Déploiement du fichier" \
-        --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\"]}" \
+        --comment "Déploiement des sources" \
+        --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\",\"chown -R apache:apache ${app_target_source_path}\",\"sudo systemctl restart httpd\",\"rm ${download_path}/fichier.zip\"]}" \
         --region eu-west-3
+
+
+
+        
+        
