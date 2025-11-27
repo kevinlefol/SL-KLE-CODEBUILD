@@ -22,10 +22,10 @@ phases:
         fi
         echo "Tag trouvé: $TAG"
 
-      - echo "Création du dossier package"
-      - mkdir /tmp/${ARTIFACT_FOLDER_NAME}
+      - echo "Création du dossier ${ARTIFACT_FOLDER_NAME}"
+      - mkdir /tmp/artifact/${ARTIFACT_FOLDER_NAME}
 
-      - echo "Copie du contenu dans package/"
+      - echo "Copie du contenu dans ${ARTIFACT_FOLDER_NAME}/"
       - cp -R . /tmp/artifact/${ARTIFACT_FOLDER_NAME}/
 
       - echo "Création du ZIP artifact.zip"
