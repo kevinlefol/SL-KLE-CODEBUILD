@@ -27,7 +27,7 @@ phases:
       - mkdir -p ${PACKAGE_DIR}
 
       - echo "Copie du contenu dans ${PACKAGE_DIR}"
-      - cp -R . ${PACKAGE_DIR}
+      - cp -R * ${PACKAGE_DIR}
 
       - echo "Création du ZIP artifact.zip"
       - zip -r artifact_${TAG}.zip ${PACKAGE_ROOT_DIR}
@@ -36,7 +36,7 @@ phases:
         echo "Upload du ZIP dans S3..."
         S3_BUCKET="$S3_BUCKET_PATH"
         S3_PREFIX="mon/dossier/cible"
-        DEST="s3://${$S3_BUCKET_PATH}/artifact_${TAG}.zip"
+        DEST="s3://${S3_BUCKET_PATH}/artifact_${TAG}.zip"
         aws s3 cp artifact_${TAG}.zip "${DEST}"
         
         
