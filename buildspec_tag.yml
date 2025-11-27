@@ -33,7 +33,7 @@ phases:
       - zip -r artifact_${TAG}.zip ${PACKAGE_ROOT_DIR}
 
       - echo "Upload du ZIP dans S3..."
-      - DEST="s3://${S3_BUCKET_PATH}/artifact_${TAG}.zip"
+      - DEST="${S3_BUCKET_PATH}/artifact_${TAG}.zip"
       - echo "DEST=$DEST"
       - aws s3 cp artifact_${TAG}.zip "${DEST}"
         
