@@ -10,7 +10,8 @@ phases:
       - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
       - echo "ARTIFACT_FOLDER_NAME=$ARTIFACT_FOLDER_NAME"
       - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
-
+      - PACKAGE_DIR=/tmp/artifact/${ARTIFACT_FOLDER_NAME}/
+      - PACKAGE_ROOT_DIR=/tmp/artifact
       - echo "le commit actuel correspond-il à un tag"
       - git fetch --tags
       - echo "Searching tag for current commit..."
@@ -22,14 +23,14 @@ phases:
         fi
         echo "Tag trouvé: $TAG"
 
-      - echo "Création du dossier ${ARTIFACT_FOLDER_NAME}"
-      - mkdir /tmp/artifact/${ARTIFACT_FOLDER_NAME}
+      - echo "Création du dossier ${PACKAGE_DIR}"
+      - mkdir -p ${PACKAGE_DIR}
 
-      - echo "Copie du contenu dans ${ARTIFACT_FOLDER_NAME}/"
-      - cp -R . /tmp/artifact/${ARTIFACT_FOLDER_NAME}/
+      - echo "Copie du contenu dans ${PACKAGE_DIR}""
+      - cp -R . ${PACKAGE_DIR}
 
       - echo "Création du ZIP artifact.zip"
-      - zip -r artifact_${TAG}.zip /tmp/artifact/
+      - zip -r artifact_${TAG}.zip ${PACKAGE_ROOT_DIR}
 
       - |
         echo "Upload du ZIP dans S3..."
