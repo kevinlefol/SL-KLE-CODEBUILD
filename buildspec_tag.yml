@@ -11,6 +11,8 @@ phases:
     commands:
       - echo "S3_BUCKET_PATH=$S3_BUCKET_PATH"
       - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
+      - echo "ARTIFACT_FOLDER_NAME=$ARTIFACT_FOLDER_NAME"
+      - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
       - echo "CODEBUILD_WEBHOOK_TRIGGER=$CODEBUILD_WEBHOOK_TRIGGER"
       - | 
         if [[ "$CODEBUILD_WEBHOOK_TRIGGER" == tag/* ]]; then
@@ -32,19 +34,19 @@ phases:
         echo "Tag trouvé: $TAG"
 
       - echo "Création du dossier package"
-      - mkdir package
+      - mkdir /tmp/${ARTIFACT_FOLDER_NAME}
 
       - echo "Copie du contenu dans package/"
-      - cp -R . package/
+      - cp -R . /tmp/artifact/${ARTIFACT_FOLDER_NAME}/
 
       - echo "Création du ZIP artifact.zip"
-      - zip -r artifact.zip package
+      - zip -r artifact_${TAG}.zip /tmp/artifact/
 
       - |
         echo "Upload du ZIP dans S3..."
         S3_BUCKET="$S3_BUCKET_PATH"
         S3_PREFIX="mon/dossier/cible"
-        DEST="s3://${$S3_BUCKET_PATH}/artifact-${TAG}.zip"
-        aws s3 cp artifact.zip "${DEST}"
+        DEST="s3://${$S3_BUCKET_PATH}/artifact_${TAG}.zip"
+        aws s3 cp artifact_${TAG}.zip "${DEST}"
         
         
