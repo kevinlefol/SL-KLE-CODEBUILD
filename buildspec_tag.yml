@@ -3,48 +3,35 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "Récupération de l'instance EC2 via tag..."
-      - |
-        INSTANCE_ID=$(aws ec2 describe-instances \
-          --filters "Name=tag:Name,Values=kle-codebuild-test" "Name=tag:environment,Values=dev"\
-          --query "Reservations[].Instances[].InstanceId" \
-          --output text \
-          --region eu-west-3)
+      - echo "S3_BUCKET_PATH=$S3_BUCKET_PATH"
+      - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
+      - echo "le commit actuel correspond-il à un tag"
+      - echo "Fetching tags..."
+      - git fetch --tags
+      - echo "Searching tag for current commit..."
+      - TAG=$(git tag --points-at HEAD)
 
-        echo "Résultat brut $INSTANCE_ID"
-
-        # Vérifie si aucun ID trouvé
-        if [ -z "$INSTANCE_ID" ]; then
-          echo "Aucune instance trouvée pour les tags spécifiés."
-          exit 1
+      - | 
+        if [ -z "$TAG" ]; then
+          echo "ERROR: Ce commit n'est associé à aucun tag. Interruption du pipeline.";
+          exit 1;
         fi
+        echo "Tag trouvé: $TAG"
 
-        # Vérifie si plusieurs IDs trouvés
-        if [ $(echo "$INSTANCE_ID" | wc -w) -gt 1 ]; then
-          echo "Plusieurs instances trouvées : $INSTANCE_ID"
-          echo "Merci de préciser des tags uniques ou d'affiner le filtre."
-          exit 1
-        fi
+      - echo "Création du dossier package"
+      - mkdir package
 
-        echo "Instance trouvée $INSTANCE_ID"
+      - echo "Copie du contenu dans package/"
+      - cp -R . package/
 
-      - echo "CODEBUILD_SOURCE_VERSION = $CODEBUILD_SOURCE_VERSION"
-      # Si CODEBUILD_SOURCE_VERSION est un ARN complet
-      - OBJECT_KEY=$(echo $CODEBUILD_SOURCE_VERSION | awk -F':::' '{print $2}')
-      - echo "Object key $OBJECT_KEY"
-      - echo "download_path $download_path"
-      - echo "app_target_source_path  $app_target_source_path"
-      
-      # Téléchargement du fichier depuis S3
+      - echo "Création du ZIP artifact.zip"
+      - zip -r artifact.zip package
+
       - |
-        aws ssm send-command \
-        --instance-ids "$INSTANCE_ID" \
-        --document-name "AWS-RunShellScript" \
-        --comment "Déploiement des sources" \
-        --parameters "{\"commands\":[\"mkdir -p $download_path\",\"aws s3 cp s3://$OBJECT_KEY ${download_path}/fichier.zip\",\"unzip -o ${download_path}/fichier.zip -d ${app_target_source_path}\",\"chown -R apache:apache ${app_target_source_path}\",\"sudo systemctl restart httpd\",\"rm ${download_path}/fichier.zip\"]}" \
-        --region eu-west-3
-
-
-
+        echo "Upload du ZIP dans S3..."
+        S3_BUCKET="$S3_BUCKET_PATH"
+        S3_PREFIX="mon/dossier/cible"
+        DEST="s3://${$S3_BUCKET_PATH}/artifact-${TAG}.zip"
+        aws s3 cp artifact.zip "${DEST}"
         
         

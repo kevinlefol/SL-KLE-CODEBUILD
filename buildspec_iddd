@@ -3,6 +3,8 @@ version: 0.2
 phases:
   build:
     commands:
+      - echo "S3_BUCKET_PATH=$S3_BUCKET_PATH"
+      - echo "GIT_TAG_VERSION=$GIT_TAG_VERSION"
       - echo "Récupération de l'instance EC2 via tag..."
       - |
         INSTANCE_ID=$(aws ec2 describe-instances \
